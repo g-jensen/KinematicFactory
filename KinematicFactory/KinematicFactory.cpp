@@ -16,6 +16,7 @@ int main(int argc, char** argv) {
     sf::Clock dt;
 
     Arm arm({600,400}, 2,200);
+    Limb limb({600,400},100,270);
 
     while (window.isOpen()) {
 
@@ -31,11 +32,13 @@ int main(int argc, char** argv) {
         }
         ImGui::SFML::Update(window, dt.restart());
 
-        arm.follow(mouse_pos);
+        //arm.follow(mouse_pos);
+        limb.follow(mouse_pos);
 
         window.clear();
 
-        arm.draw(window);
+        //arm.draw(window);
+        limb.draw(window);
 
         ImGui::SFML::Render(window);
         window.display();

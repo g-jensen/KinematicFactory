@@ -14,7 +14,6 @@ public:
 	sf::Vector2f end;
 	float length;
 	float rotation;
-	bool base;
 	Limb(sf::Vector2f root, float length, float rotation);
 	void follow(sf::Vector2f position); // "point" at that position
 	void draw(sf::RenderWindow& window);
