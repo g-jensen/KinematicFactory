@@ -9,6 +9,8 @@
 #include "Limb.h"
 #include "Arm.h"
 
+#include "ArmRecording.h"
+
 int main(int argc, char** argv) {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Kinematic Factory");
     ImGui::SFML::Init(window);
@@ -17,15 +19,9 @@ int main(int argc, char** argv) {
 
     Arm arm({600,400}, 400);
 
-    std::vector<sf::CircleShape> circles;
+    ArmRecording recording(&arm);
 
-    for (int i = 0; i < 5; i++) {
-        sf::CircleShape c(10);
-        c.setPosition(300, 400);
-        circles.push_back(c);
-    }
-
-    sf::CircleShape* grabbed = nullptr;
+    bool record_mode = false;
 
     while (window.isOpen()) {
 
@@ -39,31 +35,50 @@ int main(int argc, char** argv) {
                 window.close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-                bool found = false;
-                for (auto& item : circles) {
-                    if (item.getGlobalBounds().contains((sf::Vector2f)arm.limbs[arm.limbs.size() - 1].end)) {
-                        grabbed = &item;
-                        found = true;
-                        break;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                    if (record_mode) {
+                        recording.add_point((sf::Vector2f)arm.get_end());
                     }
                 }
-                if (!found) { grabbed = nullptr; }
+
             }
         }
-
-        if (grabbed != nullptr) {
-            grabbed->setPosition((sf::Vector2f)arm.limbs[arm.limbs.size() - 1].end);
-        }
-
         ImGui::SFML::Update(window, dt.restart());
 
-        arm.follow((sf::Vector2<double>)mouse_pos);
+        if (!recording.playing_recording) {
+            arm.follow((sf::Vector2<double>)mouse_pos);
+        }
+        else {
+            recording.update();
+        }
+
+        ImGui::Begin("controls");
+        if (!record_mode) {
+            if (!recording.playing_recording) {
+                if (ImGui::Button("start recording")) {
+                    recording.reset();
+                    record_mode = true;
+                }
+                if (ImGui::Button("play recording")) {
+                    recording.play();
+                }
+            }
+            else {
+                if (ImGui::Button("stop playing")) {
+                    recording.stop();
+                }
+            }
+        }
+        else {
+            if (ImGui::Button("stop recording")) {
+                record_mode = false;
+                recording.recording_iteration = 0;
+                recording.recorded_points.erase(recording.recorded_points.end() - 1);
+            }
+        }
+        ImGui::End();
 
         window.clear();
-
-        for (auto& item : circles) {
-            window.draw(item);
-        }
 
         arm.draw(window);
 

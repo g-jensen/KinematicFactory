@@ -11,6 +11,7 @@ public:
 	void follow(sf::Vector2<double> position);
 	void rotate(size_t index, double angle_rad);
 	void reset();
+	sf::Vector2<double> get_end();
 	std::vector<Limb> limbs;
 private:
 	double reach;

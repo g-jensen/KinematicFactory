@@ -82,3 +82,8 @@ void Arm::reset()
 		limbs.push_back(Limb(limbs[i - 1].end, per, M_PI / 2));
 	}
 }
+
+sf::Vector2<double> Arm::get_end()
+{
+	return limbs[limbs.size() - 1].end;
+}
