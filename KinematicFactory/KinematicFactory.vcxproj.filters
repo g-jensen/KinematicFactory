@@ -39,6 +39,9 @@
     <ClCompile Include="Arm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="_Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Arm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="_Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

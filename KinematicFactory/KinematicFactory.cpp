@@ -15,8 +15,17 @@ int main(int argc, char** argv) {
 
     sf::Clock dt;
 
-    Arm arm({600,400}, 2,200);
-    Limb limb({600,400},100,270);
+    Arm arm({600,400}, 400);
+
+    std::vector<sf::CircleShape> circles;
+
+    for (int i = 0; i < 5; i++) {
+        sf::CircleShape c(10);
+        c.setPosition(300, 400);
+        circles.push_back(c);
+    }
+
+    sf::CircleShape* grabbed = nullptr;
 
     while (window.isOpen()) {
 
@@ -29,16 +38,34 @@ int main(int argc, char** argv) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            if (event.type == sf::Event::MouseButtonPressed) {
+                bool found = false;
+                for (auto& item : circles) {
+                    if (item.getGlobalBounds().contains((sf::Vector2f)arm.limbs[arm.limbs.size() - 1].end)) {
+                        grabbed = &item;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) { grabbed = nullptr; }
+            }
         }
+
+        if (grabbed != nullptr) {
+            grabbed->setPosition((sf::Vector2f)arm.limbs[arm.limbs.size() - 1].end);
+        }
+
         ImGui::SFML::Update(window, dt.restart());
 
-        //arm.follow(mouse_pos);
-        limb.follow(mouse_pos);
+        arm.follow((sf::Vector2<double>)mouse_pos);
 
         window.clear();
 
-        //arm.draw(window);
-        limb.draw(window);
+        for (auto& item : circles) {
+            window.draw(item);
+        }
+
+        arm.draw(window);
 
         ImGui::SFML::Render(window);
         window.display();
