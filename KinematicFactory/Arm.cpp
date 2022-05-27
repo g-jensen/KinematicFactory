@@ -12,6 +12,7 @@ Arm::Arm(sf::Vector2<double> origin, double reach)
 	this->hitbox.top = origin.y - reach/2;
 	this->hitbox.height = reach;
 	this->hitbox.width = reach;
+	this->selected = false;
 	limbs.push_back(Limb(origin, per,M_PI/2));
 	// for (size_t i = 1; i < n; i++) {
 	for (size_t i = 1; i < 2; i++) {
@@ -21,6 +22,20 @@ Arm::Arm(sf::Vector2<double> origin, double reach)
 
 void Arm::draw(sf::RenderWindow& window)
 {
+	if (selected) {
+		// draw overlay
+		sf::Vector2f size = sf::Vector2f((float)reach/25,(float)reach/25);
+		sf::RectangleShape r1(size);
+		r1.setFillColor(sf::Color::Red);
+		r1.setPosition({ hitbox.left,hitbox.top });
+		window.draw(r1);
+		r1.setPosition({ hitbox.left+hitbox.width,hitbox.top });
+		window.draw(r1);
+		r1.setPosition({ hitbox.left,hitbox.top+hitbox.height });
+		window.draw(r1);
+		r1.setPosition({ hitbox.left+hitbox.width,hitbox.top+hitbox.height });
+		window.draw(r1);
+	}
 	for (auto item : limbs) {
 		item.draw(window);
 	}

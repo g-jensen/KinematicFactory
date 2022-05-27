@@ -2,6 +2,7 @@
 
 #include "Limb.h"
 #include "_Math.h"
+#include "SFML/Graphics/RectangleShape.hpp"
 
 class Arm
 {
@@ -14,6 +15,7 @@ public:
 	sf::Vector2<double> get_end();
 	std::vector<Limb> limbs;
 	sf::FloatRect hitbox;
+	bool selected;
 private:
 	double reach;
 	double per;

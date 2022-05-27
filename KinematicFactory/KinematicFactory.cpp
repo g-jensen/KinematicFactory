@@ -17,14 +17,16 @@ int main(int argc, char** argv) {
 
     sf::Clock dt;
 
-    Arm arm({600,400}, 400);
+    Arm arm1({ 200,200 }, 100);
+    Arm arm2({ 600,400 }, 200);
+    Arm arm3({ 400,500 }, 200);
 
-    ArmRecording recording(&arm);
+    ArmRecording recording(&arm1);
 
-    sf::RectangleShape hitbox;
-    hitbox.setFillColor(sf::Color::Green);
-    hitbox.setPosition({ arm.hitbox.left,arm.hitbox.top });
-    hitbox.setSize({ arm.hitbox.width,arm.hitbox.height });
+    std::vector<Arm*> arms;
+    arms.push_back(&arm1);
+    arms.push_back(&arm2);
+    arms.push_back(&arm3);
 
     bool record_mode = false;
 
@@ -41,8 +43,14 @@ int main(int argc, char** argv) {
             }
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                    if (record_mode) {
-                        recording.add_point((sf::Vector2f)arm.get_end());
+                    bool hasSelected = false;
+                    for (const auto& a : arms) {
+                        if (a == nullptr) { continue; }
+                        a->selected = false;
+                        if (!hasSelected && a->hitbox.contains(mouse_pos)) {
+                            a->selected = true;
+                            hasSelected = true;
+                        }
                     }
                 }
 
@@ -50,7 +58,14 @@ int main(int argc, char** argv) {
         }
         ImGui::SFML::Update(window, dt.restart());
 
-        if (!recording.playing_recording) {
+        for (const auto& a : arms) {
+            if (a == nullptr) { continue; }
+            if (a->selected) {
+                a->follow((sf::Vector2<double>)mouse_pos);
+            }
+        }
+
+        /*if (!recording.playing_recording) {
             arm.follow((sf::Vector2<double>)mouse_pos);
         }
         else {
@@ -81,12 +96,15 @@ int main(int argc, char** argv) {
                 recording.recorded_points.erase(recording.recorded_points.end() - 1);
             }
         }
-        ImGui::End();
+        ImGui::End();*/
 
         window.clear();
 
-        window.draw(hitbox);
-        arm.draw(window);
+        for (const auto& a : arms) {
+            if (a == nullptr) { continue; }
+            a->draw(window);
+        }
+
 
         ImGui::SFML::Render(window);
         window.display();
