@@ -8,6 +8,10 @@ Arm::Arm(sf::Vector2<double> origin, double reach)
 	this->limb_count = 2;
 	this->reach = reach;
 	this->per = reach / limb_count;
+	this->hitbox.left = origin.x - reach/2;
+	this->hitbox.top = origin.y - reach/2;
+	this->hitbox.height = reach;
+	this->hitbox.width = reach;
 	limbs.push_back(Limb(origin, per,M_PI/2));
 	// for (size_t i = 1; i < n; i++) {
 	for (size_t i = 1; i < 2; i++) {

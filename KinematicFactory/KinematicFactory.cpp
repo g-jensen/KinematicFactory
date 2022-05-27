@@ -21,6 +21,11 @@ int main(int argc, char** argv) {
 
     ArmRecording recording(&arm);
 
+    sf::RectangleShape hitbox;
+    hitbox.setFillColor(sf::Color::Green);
+    hitbox.setPosition({ arm.hitbox.left,arm.hitbox.top });
+    hitbox.setSize({ arm.hitbox.width,arm.hitbox.height });
+
     bool record_mode = false;
 
     while (window.isOpen()) {
@@ -80,6 +85,7 @@ int main(int argc, char** argv) {
 
         window.clear();
 
+        window.draw(hitbox);
         arm.draw(window);
 
         ImGui::SFML::Render(window);

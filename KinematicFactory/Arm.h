@@ -13,6 +13,7 @@ public:
 	void reset();
 	sf::Vector2<double> get_end();
 	std::vector<Limb> limbs;
+	sf::FloatRect hitbox;
 private:
 	double reach;
 	double per;
