@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <array>
 
 #include "imgui/imgui.h"
 #include "imgui/imgui-SFML.h"
@@ -12,6 +13,8 @@
 int main(int argc, char** argv) {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Kinematic Factory");
     ImGui::SFML::Init(window);
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 
     sf::Clock dt;
 
@@ -28,11 +31,15 @@ int main(int argc, char** argv) {
 
     bool record_mode = false;
 
+    //char itemSlots[4] = { 0,0,0,0 };
+    std::array<char,10> itemSlots;
+    memset(&itemSlots[0], 0, sizeof(char) * itemSlots.size());
+
     while (window.isOpen()) {
+        window.setFramerateLimit(60);
 
         sf::Vector2f mouse_pos = (sf::Vector2f)sf::Mouse::getPosition(window);
 
-        window.setFramerateLimit(60);
         sf::Event event;
         while (window.pollEvent(event)) {
             ImGui::SFML::ProcessEvent(event);
@@ -43,6 +50,7 @@ int main(int argc, char** argv) {
 
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
+                    // deal with selecting arms
                     bool hasSelected = false;
                     for (const auto& a : arms) {
                         if (a == nullptr) { continue; }
@@ -64,11 +72,12 @@ int main(int argc, char** argv) {
         }
         ImGui::SFML::Update(window, dt.restart());
 
+        // manage arm select UI
         for (const auto& a : arms) {
             if (a == nullptr) { continue; }
             if (a->selected) {
                 ImGui::SetNextWindowPos({ a->hitbox.left+(float)a->reach+20,a->hitbox.top });
-                ImGui::Begin("edit arm");
+                ImGui::Begin("edit arm",NULL,window_flags);
                 if (!record_mode) {
                     if (!a->playing_recording) {
                         if (ImGui::Button("start recording")) {
@@ -100,44 +109,28 @@ int main(int argc, char** argv) {
                 a->follow((sf::Vector2<double>)mouse_pos);
             }
         }
-        if (selectedArm != nullptr) {
-            if (selectedArm->playing_recording) {
-                selectedArm->update_recording();
-            }
-        }
 
-        /*if (!recording.playing_recording) {
-            arm.follow((sf::Vector2<double>)mouse_pos);
+        // testing grid
+        ImGui::SetNextWindowPos({0,800-100});
+        ImGui::SetNextWindowSize({1200,100});
+        ImGui::SetNextWindowBgAlpha(1);
+        ImGui::Begin("Items",NULL,window_flags);
+        for (int i = 0; i < itemSlots.size(); i++) {
+            ImGui::SameLine();
+            ImGui::PushID(i * itemSlots.size());
+            if (ImGui::Selectable("Item", itemSlots[i] != 0, 0, ImVec2(50, 50)))
+            {
+                memset(&itemSlots[0], 0, sizeof(char) * itemSlots.size());
+                itemSlots[i] = 1;
+            }
+            ImGui::PopID();
         }
-        else {
-            recording.update();
-        }
+        ImGui::End();
 
-        ImGui::Begin("controls");
-        if (!record_mode) {
-            if (!recording.playing_recording) {
-                if (ImGui::Button("start recording")) {
-                    recording.reset();
-                    record_mode = true;
-                }
-                if (ImGui::Button("play recording")) {
-                    recording.play();
-                }
-            }
-            else {
-                if (ImGui::Button("stop playing")) {
-                    recording.stop();
-                }
-            }
+        // update recording
+        if (selectedArm != nullptr && selectedArm->playing_recording) {
+            selectedArm->update_recording();
         }
-        else {
-            if (ImGui::Button("stop recording")) {
-                record_mode = false;
-                recording.recording_iteration = 0;
-                recording.recorded_points.erase(recording.recorded_points.end() - 1);
-            }
-        }
-        ImGui::End();*/
 
         window.clear();
 
