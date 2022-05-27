@@ -27,13 +27,13 @@ int main(int argc, char** argv) {
     arms.push_back(&arm2);
     arms.push_back(&arm3);
 
-    Arm* selectedArm = nullptr;
+    Arm* selected_arm = nullptr;
 
     bool record_mode = false;
 
     //char itemSlots[4] = { 0,0,0,0 };
-    std::array<char,10> itemSlots;
-    memset(&itemSlots[0], 0, sizeof(char) * itemSlots.size());
+    std::array<bool,10> item_slots;
+    memset(&item_slots[0], 0, sizeof(char) * item_slots.size());
 
     while (window.isOpen()) {
         window.setFramerateLimit(60);
@@ -51,23 +51,31 @@ int main(int argc, char** argv) {
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
                     // deal with selecting arms
-                    bool hasSelected = false;
+                    bool has_selected = false;
                     for (const auto& a : arms) {
                         if (a == nullptr) { continue; }
-                        //a->selected = false;
-                        if (!hasSelected && a->hitbox.contains(mouse_pos) && selectedArm == nullptr) {
+                        if (!has_selected && a->hitbox.contains(mouse_pos) && selected_arm == nullptr) {
                             a->selected = true;
-                            selectedArm = a;
-                            hasSelected = true;
+                            selected_arm = a;
+                            has_selected = true;
                         }
                     }
 
-                    if (selectedArm != nullptr && record_mode) {
-                        selectedArm->add_recording_point(mouse_pos);
+                    if (selected_arm != nullptr && record_mode) {
+                        selected_arm->add_recording_point(mouse_pos);
                     }
 
                 }
 
+            }
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Escape) {
+                    if (selected_arm == nullptr) { break; }
+                    if (!selected_arm->playing_recording) {
+                        selected_arm->selected = false;
+                        selected_arm = nullptr;
+                    }
+                }
             }
         }
         ImGui::SFML::Update(window, dt.restart());
@@ -77,6 +85,7 @@ int main(int argc, char** argv) {
             if (a == nullptr) { continue; }
             if (a->selected) {
                 ImGui::SetNextWindowPos({ a->hitbox.left+(float)a->reach+20,a->hitbox.top });
+                ImGui::SetNextWindowBgAlpha(1);
                 ImGui::Begin("edit arm",NULL,window_flags);
                 if (!record_mode) {
                     if (!a->playing_recording) {
@@ -87,9 +96,9 @@ int main(int argc, char** argv) {
                         if (ImGui::Button("test animation")) {
                             a->play_recording();
                         }
-                        if (ImGui::Button("deselect arm")) {
+                        if (ImGui::Button("deselect arm (esc)")) {
                             a->selected = false;
-                            selectedArm = nullptr;
+                            selected_arm = nullptr;
                         }
                     }
                     else {
@@ -110,26 +119,28 @@ int main(int argc, char** argv) {
             }
         }
 
-        // testing grid
-        ImGui::SetNextWindowPos({0,800-100});
-        ImGui::SetNextWindowSize({1200,100});
+        // testing item grid
+        ImGui::SetNextWindowPos({0,800-65});
+        ImGui::SetNextWindowSize({1200,65});
         ImGui::SetNextWindowBgAlpha(1);
-        ImGui::Begin("Items",NULL,window_flags);
-        for (int i = 0; i < itemSlots.size(); i++) {
+        ImGui::Begin("Items",NULL,window_flags | ImGuiWindowFlags_NoTitleBar);
+        for (int i = 0; i < item_slots.size(); i++) {
             ImGui::SameLine();
-            ImGui::PushID(i * itemSlots.size());
-            if (ImGui::Selectable("Item", itemSlots[i] != 0, 0, ImVec2(50, 50)))
+            ImGui::PushID(i * item_slots.size());
+            if (ImGui::Selectable("Item", item_slots[i], 0, ImVec2(50, 50)))
             {
-                memset(&itemSlots[0], 0, sizeof(char) * itemSlots.size());
-                itemSlots[i] = 1;
+                bool temp = item_slots[i];
+                memset(&item_slots[0], 0, sizeof(char) * item_slots.size());
+                item_slots[i] = temp;
+                item_slots[i] = !item_slots[i];
             }
             ImGui::PopID();
         }
         ImGui::End();
 
         // update recording
-        if (selectedArm != nullptr && selectedArm->playing_recording) {
-            selectedArm->update_recording();
+        if (selected_arm != nullptr && selected_arm->playing_recording) {
+            selected_arm->update_recording();
         }
 
         window.clear();
