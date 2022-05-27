@@ -13,6 +13,13 @@ Arm::Arm(sf::Vector2<double> origin, double reach)
 	this->hitbox.height = reach;
 	this->hitbox.width = reach;
 	this->selected = false;
+
+	this->animation = PositionAnimation(&temp, AnimationType::LINEAR, { 0,0 }, 100);
+	this->recorded_points = std::vector<sf::Vector2f>();
+	this->playing_recording = false;
+	this->recording_iteration = 0;
+	this->temp = sf::Transformable();
+
 	limbs.push_back(Limb(origin, per,M_PI/2));
 	// for (size_t i = 1; i < n; i++) {
 	for (size_t i = 1; i < 2; i++) {
@@ -105,4 +112,55 @@ void Arm::reset()
 sf::Vector2<double> Arm::get_end()
 {
 	return limbs[limbs.size() - 1].end;
+}
+
+void Arm::add_recording_point(sf::Vector2f point)
+{
+	recorded_points.push_back(point);
+}
+
+void Arm::set_recording_points(std::vector<sf::Vector2f> points)
+{
+	this->recorded_points = points;
+}
+
+void Arm::update_recording()
+{
+	if (playing_recording) {
+		animation.iterate();
+		this->follow((sf::Vector2<double>)temp.getPosition());
+		if (animation.isFinished()) {
+			if (recording_iteration + 1 < recorded_points.size()) {
+				recording_iteration++;
+				double len = _Math::length((sf::Vector2<double>)recorded_points[recording_iteration - 1], (sf::Vector2<double>)recorded_points[recording_iteration]);
+				animation = PositionAnimation(&temp, AnimationType::LINEAR, { recorded_points[recording_iteration] }, (int)(len / 4));
+			}
+			else {
+				playing_recording = false;
+				recording_iteration = 0;
+			}
+		}
+	}
+}
+
+void Arm::stop_recording()
+{
+	playing_recording = false;
+	recording_iteration = 0;
+}
+
+void Arm::reset_recording()
+{
+	recorded_points.clear();
+	recording_iteration = 0;
+}
+
+void Arm::play_recording()
+{
+	if (recorded_points.size() > 0) {
+		playing_recording = true;
+		temp.setPosition((sf::Vector2f)this->get_end());
+		double len = _Math::length(this->get_end(), (sf::Vector2<double>)recorded_points[recording_iteration]);
+		animation = PositionAnimation(&temp, AnimationType::LINEAR, { recorded_points[recording_iteration] }, (int)(len / 4));
+	}
 }

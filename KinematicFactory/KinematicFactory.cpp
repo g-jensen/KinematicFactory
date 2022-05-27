@@ -9,8 +9,6 @@
 #include "Limb.h"
 #include "Arm.h"
 
-#include "ArmRecording.h"
-
 int main(int argc, char** argv) {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Kinematic Factory");
     ImGui::SFML::Init(window);
@@ -21,12 +19,12 @@ int main(int argc, char** argv) {
     Arm arm2({ 600,400 }, 200);
     Arm arm3({ 400,500 }, 200);
 
-    ArmRecording recording(&arm1);
-
     std::vector<Arm*> arms;
     arms.push_back(&arm1);
     arms.push_back(&arm2);
     arms.push_back(&arm3);
+
+    Arm* selectedArm = nullptr;
 
     bool record_mode = false;
 
@@ -42,16 +40,24 @@ int main(int argc, char** argv) {
                 window.close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
+
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+
                     bool hasSelected = false;
                     for (const auto& a : arms) {
                         if (a == nullptr) { continue; }
-                        a->selected = false;
-                        if (!hasSelected && a->hitbox.contains(mouse_pos)) {
+                        //a->selected = false;
+                        if (!hasSelected && a->hitbox.contains(mouse_pos) && selectedArm == nullptr) {
                             a->selected = true;
+                            selectedArm = a;
                             hasSelected = true;
                         }
                     }
+
+                    if (selectedArm != nullptr && record_mode) {
+                        selectedArm->add_recording_point(mouse_pos);
+                    }
+
                 }
 
             }
@@ -61,7 +67,42 @@ int main(int argc, char** argv) {
         for (const auto& a : arms) {
             if (a == nullptr) { continue; }
             if (a->selected) {
+                ImGui::SetNextWindowPos({ a->hitbox.left+(float)a->reach+20,a->hitbox.top });
+                ImGui::Begin("edit arm");
+                if (!record_mode) {
+                    if (!a->playing_recording) {
+                        if (ImGui::Button("start recording")) {
+                            a->reset_recording();
+                            record_mode = true;
+                        }
+                        if (ImGui::Button("test animation")) {
+                            a->play_recording();
+                        }
+                        if (ImGui::Button("deselect arm")) {
+                            a->selected = false;
+                            selectedArm = nullptr;
+                        }
+                    }
+                    else {
+                        if (ImGui::Button("stop playing")) {
+                            a->stop_recording();
+                        }
+                    }
+                }
+                else {
+                    if (ImGui::Button("stop recording")) {
+                        record_mode = false;
+                        a->recording_iteration = 0;
+                        a->recorded_points.erase(a->recorded_points.end() - 1);
+                    }
+                }
+                ImGui::End();
                 a->follow((sf::Vector2<double>)mouse_pos);
+            }
+        }
+        if (selectedArm != nullptr) {
+            if (selectedArm->playing_recording) {
+                selectedArm->update_recording();
             }
         }
 
