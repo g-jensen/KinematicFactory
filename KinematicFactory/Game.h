@@ -13,6 +13,7 @@
 #include "Arm.h"
 #include "ArmItem.h"
 #include "ImGuiHelper.h"
+#include "Camera.h"
 
 class Game
 {
@@ -20,6 +21,8 @@ public:
 	Game();
 	void run();
 	static sf::RenderWindow* window;
-	static sf::Vector2f mouse_pos;
+	static Camera* camera;
+	static sf::Vector2f mouse_pos_window;
+	static sf::Vector2f mouse_pos_world;
 };
 

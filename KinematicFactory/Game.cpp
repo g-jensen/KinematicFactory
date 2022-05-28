@@ -1,17 +1,20 @@
 #include "Game.h"
 
 sf::RenderWindow* Game::window;
-sf::Vector2f Game::mouse_pos;
+sf::Vector2f Game::mouse_pos_window;
+sf::Vector2f Game::mouse_pos_world;
+Camera* Game::camera;
 
 Game::Game()
 {
-    Game::window = new sf::RenderWindow(sf::VideoMode(1200, 800), "Kinematic Factory", sf::Style::Default, sf::ContextSettings(0, 0, 8));
-    Game::mouse_pos = (sf::Vector2f)sf::Mouse::getPosition(*Game::window);
+    window = new sf::RenderWindow(sf::VideoMode(1200, 800), "Kinematic Factory", sf::Style::Default, sf::ContextSettings(0, 0, 8));
+    mouse_pos_window = (sf::Vector2f)sf::Mouse::getPosition(*window);
+    camera = new Camera(*window);
 }
 
 void Game::run()
 {
-    ImGui::SFML::Init(*Game::window);
+    ImGui::SFML::Init(*window);
 
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 
@@ -35,27 +38,43 @@ void Game::run()
 
     bool record_mode = false;
 
+    bool moving = false;
 
-    while (Game::window->isOpen()) {
-        Game::window->setFramerateLimit(60);
+    sf::Vector2f original_pos = {0,0};
 
-        Game::mouse_pos = (sf::Vector2f)sf::Mouse::getPosition(*Game::window);
+    while (window->isOpen()) {
+        if (!window->hasFocus()) { continue; }
+        window->setFramerateLimit(120);
+        window->setView(camera->view);
+
+        mouse_pos_window = (sf::Vector2f)sf::Mouse::getPosition(*window);
+        mouse_pos_world = (sf::Vector2f)window->mapPixelToCoords((sf::Vector2i)mouse_pos_window);
 
         sf::Event event;
-        while (Game::window->pollEvent(event)) {
+        while (window->pollEvent(event)) {
             ImGui::SFML::ProcessEvent(event);
             if (event.type == sf::Event::Closed) {
-                Game::window->close();
+                window->close();
+            }
+            if (event.type == sf::Event::MouseWheelMoved) {
+                if (event.mouseWheel.delta >= 1) {
+                    camera->zoom(0.8);
+                }
+                else if (event.mouseWheel.delta <= -1) {
+                    camera->zoom(1.25);
+                }
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+
+                    moving = true;
+                    original_pos = mouse_pos_window;
 
                     // deal with selecting arms
                     bool has_selected = false;
                     for (const auto& a : Arm::Arms) {
                         if (a == nullptr) { continue; }
-                        if (!has_selected && a->hitbox.contains(Game::mouse_pos) && selected_arm == nullptr) {
+                        if (!has_selected && a->hitbox.contains(mouse_pos_world) && selected_arm == nullptr) {
                             a->selected = true;
                             selected_arm = a;
                             has_selected = true;
@@ -63,7 +82,7 @@ void Game::run()
                     }
 
                     if (selected_arm != nullptr && record_mode) {
-                        selected_arm->add_recording_point(Game::mouse_pos);
+                        selected_arm->add_recording_point(mouse_pos_world);
                     }
 
                     if (selected_item != nullptr && !has_selected && selected_arm == nullptr) {
@@ -73,6 +92,18 @@ void Game::run()
                 }
 
             }
+
+            if (event.type == sf::Event::MouseButtonReleased) {
+                moving = false;
+            }
+
+            if (event.type == sf::Event::MouseMoved) {
+                if (moving && selected_arm == nullptr) {
+                    camera->move(original_pos - mouse_pos_window);
+                    original_pos = mouse_pos_window;
+                }
+            }
+
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Escape) {
                     if (selected_arm == nullptr) { break; }
@@ -83,7 +114,7 @@ void Game::run()
                 }
             }
         }
-        ImGui::SFML::Update(*Game::window, dt.restart());
+        ImGui::SFML::Update(*window, dt.restart());
 
         // UI
         {
@@ -94,7 +125,8 @@ void Game::run()
                 Arm* a = Arm::Arms[i];
                 if (a == nullptr) { continue; }
                 if (a->selected) {
-                    ImGui::SetNextWindowPos({ a->hitbox.left + (float)a->reach + 20,a->hitbox.top });
+                    sf::Vector2f pos = {a->hitbox.left + (float)a->reach + 20,a->hitbox.top };
+                    ImGui::SetNextWindowPos(window->mapCoordsToPixel(pos));
                     ImGui::SetNextWindowSize({ 155,120 });
                     ImGui::SetNextWindowBgAlpha(1);
                     ImGui::Begin("edit arm", NULL, window_flags);
@@ -136,7 +168,7 @@ void Game::run()
                         }
                     }
                     ImGui::End();
-                    a->follow((sf::Vector2<double>)Game::mouse_pos);
+                    a->follow((sf::Vector2<double>)mouse_pos_world);
                 }
             }
 
@@ -189,26 +221,28 @@ void Game::run()
             selected_arm->update_recording();
         }
 
-        Game::window->clear();
+        window->clear();
 
         for (const auto& a : Arm::Arms) {
             if (a == nullptr) { continue; }
-            a->draw(*Game::window);
+            a->draw(*window);
         }
 
 
-        ImGui::SFML::Render(*Game::window);
-        Game::window->display();
+        ImGui::SFML::Render(*window);
+        window->display();
     }
 
     for (auto& item : items) {
         delete item;
     }
-    
+
     for (auto& arm : Arm::Arms) {
         delete arm;
     }
-    delete Game::window;
 
+    delete window;
+    delete camera;
+   
     ImGui::SFML::Shutdown();
 }
