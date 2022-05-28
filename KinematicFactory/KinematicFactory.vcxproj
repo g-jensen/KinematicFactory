@@ -146,6 +146,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Arm.cpp" />
     <ClCompile Include="ArmRecording.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Limb.cpp" />
     <ClCompile Include="imgui\imgui-SFML.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Arm.h" />
     <ClInclude Include="ArmRecording.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Limb.h" />
     <ClInclude Include="imgui\imconfig-SFML.h" />
     <ClInclude Include="imgui\imconfig.h" />

@@ -33,7 +33,7 @@ void Arm::draw(sf::RenderWindow& window)
 		// draw overlay
 		sf::Vector2f size = sf::Vector2f((float)reach/25,(float)reach/25);
 		sf::RectangleShape r1(size);
-		r1.setFillColor(sf::Color::Red);
+		r1.setFillColor(sf::Color(255, 50, 50));
 		r1.setPosition({ hitbox.left,hitbox.top });
 		window.draw(r1);
 		r1.setPosition({ hitbox.left+hitbox.width,hitbox.top });
