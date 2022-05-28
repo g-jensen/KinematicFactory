@@ -145,7 +145,10 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Arm.cpp" />
+    <ClCompile Include="ArmItem.cpp" />
     <ClCompile Include="ArmRecording.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Limb.cpp" />
     <ClCompile Include="imgui\imgui-SFML.cpp" />
@@ -160,7 +163,10 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Arm.h" />
+    <ClInclude Include="ArmItem.h" />
     <ClInclude Include="ArmRecording.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Limb.h" />
     <ClInclude Include="imgui\imconfig-SFML.h" />

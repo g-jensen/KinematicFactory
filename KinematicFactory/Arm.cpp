@@ -1,5 +1,7 @@
 #include "Arm.h"
 
+std::vector<Arm*> Arm::Arms;
+
 // Arm::Arm(sf::Vector2<double> origin, size_t n, double reach)
 Arm::Arm(sf::Vector2<double> origin, double reach)
 {

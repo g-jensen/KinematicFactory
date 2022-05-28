@@ -8,6 +8,7 @@
 class Arm
 {
 public:
+	static std::vector<Arm*> Arms;
 	Arm(sf::Vector2<double> origin, double reach);
 	void draw(sf::RenderWindow& window);
 	void follow(sf::Vector2<double> position);

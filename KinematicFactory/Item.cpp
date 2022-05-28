@@ -2,7 +2,7 @@
 
 Item::Item()
 {
-	this->name = std::string();
+	this->name = "Empty";
 	this->selected = false;
 }
 
