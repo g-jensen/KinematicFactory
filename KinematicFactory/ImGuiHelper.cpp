@@ -3,21 +3,19 @@
 // courtesy https://github.com/Nightfallen/EquiLand
 void ImGuiHelper::DarkStyle()
 {
-    // try : rgb(120, 119, 113) rgb(77, 79, 82) rgb(236, 236, 241) rgb(198, 125, 104) rgb(241, 241, 228)
-    // rgb(77, 79, 82)
     ImVec4* colors = ImGui::GetStyle().Colors;
-    colors[ImGuiCol_Text] = ImVec4(0.635, 0.678, 0.678, 1.f);//ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+    colors[ImGuiCol_Text] = ImVec4(0.635f, 0.678f, 0.678f, 1.f);//ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
     colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-    colors[ImGuiCol_WindowBg] = ImVec4(0.30, 0.31, 0.33, 0.1);//ImVec4(0.8f, 0.10f, 0.10f, 0.80f); // red thing 
+    colors[ImGuiCol_WindowBg] = ImVec4(0.30f, 0.31f, 0.33f, 0.1f);//ImVec4(0.8f, 0.10f, 0.10f, 0.80f); // red thing 
     colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
     colors[ImGuiCol_PopupBg] = ImVec4(0.19f, 0.19f, 0.19f, 0.92f);
-    colors[ImGuiCol_Border] = ImVec4(0.180, 0.190, 0.200, 1.f);//ImVec4(0.470, 0.470, 0.44,1.f);//ImVec4(0.06f, 0.06f, 0.06f, 1.00f); // same
+    colors[ImGuiCol_Border] = ImVec4(0.180f, 0.190f, 0.200f, 1.f);//ImVec4(0.470, 0.470, 0.44,1.f);//ImVec4(0.06f, 0.06f, 0.06f, 1.00f); // same
     colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.24f);
     colors[ImGuiCol_FrameBg] = ImVec4(0.05f, 0.05f, 0.05f, 0.54f);
     colors[ImGuiCol_FrameBgHovered] = ImVec4(0.19f, 0.19f, 0.19f, 0.54f);
     colors[ImGuiCol_FrameBgActive] = ImVec4(0.20f, 0.22f, 0.23f, 1.00f);
-    colors[ImGuiCol_TitleBg] = ImVec4(0.180, 0.190, 0.200, 1.f);//ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
-    colors[ImGuiCol_TitleBgActive] = ImVec4(0.180, 0.190, 0.200, 1.f);//ImVec4(0.470, 0.470, 0.44, 1.f);//ImVec4(0.06f, 0.06f, 0.06f, 1.00f); // same
+    colors[ImGuiCol_TitleBg] = ImVec4(0.180f, 0.190f, 0.200f, 1.f);//ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+    colors[ImGuiCol_TitleBgActive] = ImVec4(0.180f, 0.190f, 0.200f, 1.f);//ImVec4(0.470, 0.470, 0.44, 1.f);//ImVec4(0.06f, 0.06f, 0.06f, 1.00f); // same
     colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
     colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
     colors[ImGuiCol_ScrollbarBg] = ImVec4(0.05f, 0.05f, 0.05f, 0.54f);
@@ -30,8 +28,8 @@ void ImGuiHelper::DarkStyle()
     colors[ImGuiCol_Button] = ImVec4(0.05f, 0.05f, 0.05f, 0.54f);
     colors[ImGuiCol_ButtonHovered] = ImVec4(0.19f, 0.19f, 0.19f, 0.54f);
     colors[ImGuiCol_ButtonActive] = ImVec4(0.20f, 0.22f, 0.23f, 1.00f);
-    colors[ImGuiCol_Header] = ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
-    colors[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 0.00f, 0.00f, 0.36f);
+    //colors[ImGuiCol_Header] = ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
+    //colors[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 0.00f, 0.00f, 0.36f);
     colors[ImGuiCol_HeaderActive] = ImVec4(0.20f, 0.22f, 0.23f, 0.33f);
     colors[ImGuiCol_Separator] = ImVec4(0.28f, 0.28f, 0.28f, 0.29f);
     colors[ImGuiCol_SeparatorHovered] = ImVec4(0.44f, 0.44f, 0.44f, 0.29f);

@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         draw_list->ChannelsSplit(2);
         draw_list->ChannelsSetCurrent(1);
-        for (int i = 0; i < items.size(); i++) {
+        for (size_t i = 0; i < items.size(); i++) {
             if (i != 0) {
                 ImGui::SameLine();
                 ImGui::PushID(i);
@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
                     }
                 }
                 draw_list->ChannelsSetCurrent(0);
-                ImGuiHelper::SelectableColor(ImColor(0.1, 0.1, 0.1, 1.f));
+                ImGuiHelper::SelectableColor(ImColor(0.1f, 0.1f, 0.1f, 1.f));
             }
             draw_list->ChannelsSetCurrent(0);
             ImGui::PopID();
@@ -203,6 +203,9 @@ int main(int argc, char** argv) {
 
     for (auto& item : items) {
         delete item;
+    }
+    for (auto& arm : Arm::Arms) {
+        delete arm;
     }
     delete Game::window;
 

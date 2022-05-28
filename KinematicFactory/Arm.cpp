@@ -10,10 +10,10 @@ Arm::Arm(sf::Vector2<double> origin, double reach)
 	this->limb_count = 2;
 	this->reach = reach;
 	this->per = reach / limb_count;
-	this->hitbox.left = origin.x - reach/2;
-	this->hitbox.top = origin.y - reach/2;
-	this->hitbox.height = reach;
-	this->hitbox.width = reach;
+	this->hitbox.left = (float)(origin.x - reach/2);
+	this->hitbox.top = (float)(origin.y - reach/2);
+	this->hitbox.height = (float)reach;
+	this->hitbox.width = (float)reach;
 	this->selected = false;
 
 	this->animation = PositionAnimation(&temp, AnimationType::LINEAR, { 0,0 }, 100);
