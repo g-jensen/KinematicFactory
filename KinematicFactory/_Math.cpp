@@ -1,5 +1,17 @@
 #include "_Math.h"
 
+int _Math::clamp(int value, size_t gap)
+{
+	int v = abs(value);
+	int c = gap - (v % gap);
+	// 55 -> 50
+	// c = 45
+	// value
+	v -= gap - c;
+	if (value < 0) { v = -v - gap; }
+	return v;
+}
+
 double _Math::loc_theta(double a, double b, double c)
 {
 	// acosf range only from 0-pi

@@ -159,6 +159,8 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="KinematicFactory.cpp" />
     <ClCompile Include="PositionAnimation.cpp" />
+    <ClCompile Include="ConveyorBelt.cpp" />
+    <ClCompile Include="ConveyorBeltItem.cpp" />
     <ClCompile Include="_Math.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +183,8 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="PositionAnimation.h" />
+    <ClInclude Include="ConveyorBelt.h" />
+    <ClInclude Include="ConveyorBeltItem.h" />
     <ClInclude Include="_Math.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

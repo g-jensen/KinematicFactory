@@ -8,6 +8,9 @@
 class _Math
 {
 public:
+
+	static int clamp(int value, size_t gap);
+
 	// uses law of cosines to find theta given sides of a triangle
 	static double loc_theta(double a, double b, double c);
 

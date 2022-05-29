@@ -92,3 +92,49 @@ void ImGuiHelper::SelectableColor(ImU32 color)
     ImVec2 p_max = ImGui::GetItemRectMax();
     ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, color);
 }
+
+void ImGuiHelper::DrawItemGrid(std::array<Item*, 10>& items, Item*& selected_item)
+{
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+    ImGui::SetNextWindowPos({ 0,800 - 65 });
+    ImGui::SetNextWindowSize({ 1200,65 });
+    ImGui::SetNextWindowBgAlpha(1);
+    ImGui::Begin("Items", NULL, window_flags | ImGuiWindowFlags_NoTitleBar);
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    draw_list->ChannelsSplit(2);
+    draw_list->ChannelsSetCurrent(1);
+    for (size_t i = 0; i < items.size(); i++) {
+        if (i != 0) {
+            ImGui::SameLine();
+            ImGui::PushID(i);
+            ImGui::Spacing();
+            ImGui::SameLine();
+            ImGui::Spacing();
+            ImGui::SameLine();
+        }
+        draw_list->ChannelsSetCurrent(1);
+        ImGui::SameLine();
+        if (items[i] != nullptr) {
+            if (ImGui::Selectable(items[i]->name.c_str(), items[i]->selected, 0, ImVec2(50, 50)))
+            {
+                bool temp = items[i]->selected;
+                for (auto& item : items) { if (item != nullptr) { item->selected = false; } }
+                items[i]->selected = temp;
+                items[i]->selected = !items[i]->selected;
+                if (items[i]->selected) {
+                    selected_item = items[i];
+                }
+                else {
+                    selected_item = nullptr;
+                }
+            }
+            draw_list->ChannelsSetCurrent(0);
+            ImGuiHelper::SelectableColor(ImColor(0.1f, 0.1f, 0.1f, 1.f));
+        }
+        draw_list->ChannelsSetCurrent(0);
+        ImGui::PopID();
+    }
+    draw_list->ChannelsSetCurrent(0);
+    draw_list->ChannelsMerge();
+    ImGui::End();
+}
